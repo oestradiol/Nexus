@@ -1,0 +1,78 @@
+[workspace]
+resolver = "2"
+members = ["app/core", "app/utils", "api", "api-macros", "example-rust"]
+
+[workspace.package]
+authors = ["Elaina <17bestradiol@proton.me>"]
+repository = "https://github.com/oestradiol/nexus"
+license = "BSD-3-Clause"
+keywords = ["server", "management", "plugins"]
+rust-version = "1.81"
+edition = "2021"
+version = "0.1.0"
+
+
+[workspace.dependencies]
+# Intra-workspace dependencies
+nexus-core = { path = "app/core" }
+nexus-utils = { path = "app/utils" }
+nexus-api = { path = "api" }
+nexus-api-macros = { path = "api-macros" }
+# Runtime
+tokio = { version = "^1.28", features = ["full"] }
+# Logging
+tracing = "^0.1"
+tracing-appender = "^0.2"
+tracing-subscriber = { version = "^0.3", features = ["env-filter"] }
+tracing-layer-core = { path = "../tracing-layer-slack-discord/core" }
+debug_print = "^1.0"
+color-eyre = "^0.6"
+# Utilities
+libloading = "^0.8"
+lazy_static = "^1.5"
+anyhow = "^1.0"
+regex = "^1.11"
+async-trait = "^0.1"
+serde_json = "^1.0"
+serde = "^1.0"
+
+[profile.dev.package.tracing-layer-core]
+debug-assertions = false
+
+
+# Lint groups for tracking:
+# https://doc.rust-lang.org/rustc/lints/groups.html
+# https://rust-lang.github.io/rust-clippy/master/index.html
+
+[workspace.lints.rust]
+### Lint Groups
+future_incompatible = "deny"
+keyword_idents = "deny"
+rust_2018_idioms = "deny"
+rust_2018_compatibility = "deny"
+rust_2021_compatibility = "deny"
+rust_2024_compatibility = "deny"
+let_underscore = "deny"
+nonstandard_style = "deny"
+refining_impl_trait = "deny"
+# Also, don't use allow(unused):
+# https://www.reddit.com/r/rust/comments/1enkpxh/pro_tip_use_expectunused_upcoming_181_release/
+unused = "warn"
+
+### Overrides
+unsafe_code = { level = "deny", priority = 1 }
+unused_imports = { level = "deny", priority = 1 }
+
+[workspace.lints.clippy]
+### Lint Groups
+complexity = "deny"
+correctness = "deny"
+nursery = "deny"
+pedantic = "deny"
+perf = "deny"
+style = "deny"
+suspicious = "deny"
+
+### Overrides
+missing_errors_doc = { level = "warn", priority = 1 }
+missing_panics_doc = { level = "warn", priority = 1 }

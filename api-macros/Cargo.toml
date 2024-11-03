@@ -1,0 +1,19 @@
+[package]
+name = "nexus-api-macros"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lib]
+proc-macro = true
+
+[lints]
+workspace = true
+
+[dependencies]
+syn = { path = "../../syn", features = [
+  "full",
+] } # for parsing input TokenStreams
+quote = "^1.0" # for generating output TokenStreams
+proc-macro2 = "^1.0"
