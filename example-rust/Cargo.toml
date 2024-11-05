@@ -1,9 +1,12 @@
 [package]
 name = "nexus-example"
-version.workspace = true
-edition.workspace = true
+version = "0.1.0"
+authors.workspace = true
 repository.workspace = true
+license.workspace = true
+keywords.workspace = true
 rust-version.workspace = true
+edition.workspace = true
 
 [lib]
 crate-type = ["dylib"]
@@ -14,4 +17,3 @@ workspace = true
 [dependencies]
 nexus-api.workspace = true
 tracing.workspace = true
-nexus-api-macros.workspace = true

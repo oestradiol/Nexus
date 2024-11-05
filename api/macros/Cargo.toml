@@ -1,5 +1,5 @@
 [package]
-name = "nexus-core"
+name = "nexus-api-macros"
 version = "0.1.0"
 authors.workspace = true
 repository.workspace = true
@@ -8,15 +8,11 @@ keywords.workspace = true
 rust-version.workspace = true
 edition.workspace = true
 
+[lib]
+proc-macro = true
+
 [lints]
 workspace = true
 
-[target.'cfg(unix)'.dependencies]
-jemallocator = "^0.5"
-
 [dependencies]
-nexus-api.workspace = true
-nexus-utils.workspace = true
-libloading.workspace = true
-tokio.workspace = true
-tracing.workspace = true
+macros-lib.workspace = true

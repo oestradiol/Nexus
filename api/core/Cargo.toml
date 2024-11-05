@@ -1,9 +1,12 @@
 [package]
 name = "nexus-api"
-version.workspace = true
-edition.workspace = true
+version = "0.1.0"
+authors.workspace = true
 repository.workspace = true
+license.workspace = true
+keywords.workspace = true
 rust-version.workspace = true
+edition.workspace = true
 
 [lints]
 workspace = true
@@ -12,3 +15,4 @@ workspace = true
 tracing.workspace = true
 async-trait.workspace = true
 tracing-subscriber.workspace = true
+nexus-api-macros.workspace = true

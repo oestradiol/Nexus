@@ -7,9 +7,12 @@ use tracing::{info, warn};
 async fn before_shutdown(discord_worker: Option<BackgroundWorker>) {
     warn!("Shutting down! Running routines...");
 
-    if let Some(worker) = discord_worker {
-        info!("Detaching the Discord worker...");
-        worker.shutdown().await;
+    match discord_worker {
+        Some(worker) => {
+            info!("Detaching the Discord worker...");
+            worker.shutdown().await;
+        }
+        _ => {}
     }
 }
 

@@ -1,10 +1,12 @@
 [package]
 name = "nexus-utils"
 version = "0.1.0"
-edition = "2021"
-
-[lib]
-path = "lib.rs"
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+rust-version.workspace = true
+edition.workspace = true
 
 [lints]
 workspace = true

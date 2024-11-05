@@ -137,6 +137,7 @@ fn filter(filter_entries: &[&str], log_severity: &str) -> EnvFilter {
         });
 
     filter_entries.iter().fold(filter, |acc, s| {
-        acc.add_directive(format!("{s}=warn").parse().unwrap())
+        let dir = format!("{s}=warn").parse();
+        acc.add_directive(dir.unwrap())
     })
 }
