@@ -7,7 +7,7 @@ use nexus_api::{Meta, Plugin};
 use nexus_utils::LOGGER;
 use tracing::{info, warn, Subscriber};
 
-pub(crate) struct PluginInstance {
+pub struct PluginInstance {
     pub(crate) meta: &'static Meta,
     pub(crate) plugin: Box<dyn Plugin>,
     lib: LibWrapper,
@@ -25,10 +25,10 @@ impl PluginInstance {
             let lib = LibWrapper::new(path)?;
             let meta = *lib.get(b"META")?;
 
-            let new = lib
-                .get::<unsafe extern "Rust" fn(
+            let new =
+                lib.get::<unsafe extern "Rust" fn(
                     Arc<dyn Subscriber + Send + Sync>,
-                ) -> Box<dyn Plugin>>(b"_new_impl")?;
+                ) -> Box<dyn Plugin>>(b"_new_rust_impl")?;
             let plugin = new(LOGGER.get().unwrap().clone());
 
             Ok(Self { meta, plugin, lib })
@@ -45,6 +45,8 @@ impl LibWrapper {
 }
 impl Drop for LibWrapper {
     fn drop(&mut self) {
+        // Necessary because Rust will change on ver. 2024
+        #[allow(clippy::single_match)]
         match self.0.take().unwrap().close() {
             Err(e) => {
                 warn!("Failed to close library: {}", e);

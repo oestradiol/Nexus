@@ -3,10 +3,14 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(webhook_url: String) -> Self {
+    #[must_use]
+    pub const fn new(webhook_url: String) -> Self {
         Self { webhook_url }
     }
 
+    /// # Panics
+    /// Panics if the `DISCORD_WEBHOOK_URL` env. var is not set.
+    #[must_use]
     pub fn new_from_env() -> Self {
         Self::new(
             std::env::var("DISCORD_WEBHOOK_URL")

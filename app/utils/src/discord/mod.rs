@@ -20,12 +20,13 @@ pub struct Layer {
     config: Config,
 }
 impl Layer {
+    #[must_use]
     pub fn builder(
         config: Config,
         app_name: String,
         target_filters: EventFilters,
     ) -> WebhookLayerBuilder<Self> {
-        WebhookLayerBuilder::new(Layer { config }, app_name, target_filters)
+        WebhookLayerBuilder::new(Self { config }, app_name, target_filters)
     }
 }
 
@@ -45,8 +46,7 @@ impl WebhookMessageFactory for Layer {
     ) -> Box<dyn WebhookMessage> {
         if message.chars().count() > MAX_ERROR_MESSAGE_CHARS {
             println!(
-                "Truncating message to {} characters, original: {}",
-                MAX_ERROR_MESSAGE_CHARS, message
+                "Truncating message to {MAX_ERROR_MESSAGE_CHARS} characters, original: {message}"
             );
             message = message.chars().take(MAX_ERROR_MESSAGE_CHARS).collect();
         }
@@ -57,31 +57,36 @@ impl WebhookMessageFactory for Layer {
             "title": format!("{} - {} {}", app_name, emoji, event_level),
             "description": format!("```rust\n{}\n```", message),
             "fields": [
-                {
-                    "name": "Target Span",
-                    "value": format!("`{}::{}`", target, span),
-                    "inline": true
-                },
-                {
-                    "name": "Source",
-                    "value": format!("`{}#L{}`", source_file, source_line),
-                    "inline": true
-                },
+                // {
+                //     "name": "Target Span",
+                //     "value": format!("`{}::{}`", target, span),
+                //     "inline": true
+                // },
+                // {
+                //     "name": "Source",
+                //     "value": format!("`{}#L{}`", source_file, source_line),
+                //     "inline": true
+                // },
             ],
             "footer": {
-                "text": app_name
+                "text": format!("@ {}#L{}, {}::{}", source_file, source_line, target, span)
             },
             "color": color,
         });
+        let mut skipped = 0;
         let mut fields = into_chunks(&metadata, MAX_FIELD_VALUE_CHARS)
             .into_iter()
             .enumerate()
-            .map(|(i, chunk)| {
-                serde_json::json!({
-                    "name": format!("Metadata ({})", i),
+            .filter_map(|(i, chunk)| {
+                if chunk == "{}" {
+                    skipped += 1;
+                    return None;
+                }
+                Some(serde_json::json!({
+                    "name": format!("Metadata ({})", i - skipped),
                     "value": format!("```json\n{}\n```", chunk),
                     "inline": false
-                })
+                }))
             })
             .collect();
         embed["fields"].as_array_mut().unwrap().append(&mut fields);
@@ -89,6 +94,7 @@ impl WebhookMessageFactory for Layer {
         Box::new(Payload {
             content: match event_level {
                 Level::ERROR => Some("@everyone".to_string()),
+                Level::WARN => Some("@here".to_string()),
                 _ => None,
             },
             embeds: Some(vec![embed]),
@@ -99,11 +105,10 @@ impl WebhookMessageFactory for Layer {
 
 const fn color_from_level(level: Level) -> i32 {
     match level {
-        Level::TRACE => 1752220,
-        Level::DEBUG => 1752220,
-        Level::INFO => 5763719,
-        Level::WARN => 15105570,
-        Level::ERROR => 15548997,
+        Level::DEBUG | Level::TRACE => 1_752_220,
+        Level::INFO => 5_763_719,
+        Level::WARN => 15_105_570,
+        Level::ERROR => 15_548_997,
     }
 }
 
@@ -119,7 +124,7 @@ const fn emoji_from_level(level: Level) -> &'static str {
 
 fn into_chunks(s: &str, max_size: usize) -> Vec<&str> {
     let len = s.len();
-    let chunk_n = (len / max_size) + (len % max_size != 0) as usize;
+    let chunk_n = (len / max_size) + usize::from(len % max_size != 0);
     let mut chunks = Vec::with_capacity(chunk_n);
     for i in 0..chunk_n - 1 {
         chunks.push(&s[i * max_size..(i + 1) * max_size]);

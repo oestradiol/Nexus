@@ -7,6 +7,8 @@ use tracing::{info, warn};
 async fn before_shutdown(discord_worker: Option<BackgroundWorker>) {
     warn!("Shutting down! Running routines...");
 
+    // Necessary because Rust will change on ver. 2024
+    #[allow(clippy::single_match)]
     match discord_worker {
         Some(worker) => {
             info!("Detaching the Discord worker...");

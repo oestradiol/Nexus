@@ -22,9 +22,10 @@ pub fn plugin(input: TokenStream) -> TokenStream {
             #input
         }
 
+        #[expect(clippy::no_mangle_with_rust_abi)]
         #[expect(unsafe_code)]
         #[unsafe(no_mangle)]
-        pub extern "Rust" fn _new_impl(
+        pub extern "Rust" fn _new_rust_impl(
             logger: std::sync::Arc<dyn tracing::Subscriber + Send + Sync>,
         ) -> Box<dyn Plugin> {
             tracing::subscriber::set_global_default(logger).unwrap();

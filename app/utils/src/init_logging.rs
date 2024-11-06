@@ -20,7 +20,7 @@ pub static LOGGER: OnceLock<Arc<dyn Subscriber + Send + Sync>> =
 /// The logs are written to the console and to a file in the specified directory.
 ///
 /// # Returns
-/// Discord [BackgroundWorker] to be used on graceful shutdown.
+/// Discord [`BackgroundWorker`] to be used on graceful shutdown.
 ///
 /// # Panics
 /// When logging fails to initialize.
