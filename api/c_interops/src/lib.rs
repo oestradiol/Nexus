@@ -45,31 +45,27 @@ impl Deref for CallsiteWrapper<'_> {
 }
 impl CallsiteWrapper<'static> {
     fn new(level: Level) -> Self {
+        let mut field_id_uninit = MaybeUninit::zeroed();
+        let r#ref = field_id_uninit.as_mut_ptr();
+        let meta = Box::into_raw(Box::from(Metadata::new(
+            "dynamic_event",
+            "nexus_api_c_interops::log",
+            level,
+            Some(file!()),
+            Some(line!()),
+            Some("nexus_api_c_interops"),
+            FieldSet::new(&["message"], unsafe {
+                field_id_uninit.assume_init()
+            }),
+            tracing::metadata::Kind::EVENT,
+        )));
+        let callsite =
+            Box::into_raw(Box::new(DefaultCallsite::new(unsafe { &*meta })));
         unsafe {
-            let mut field_id_uninit = MaybeUninit::zeroed();
-            let r#ref = field_id_uninit.as_mut_ptr();
-            let meta = Box::into_raw(Box::from(Metadata::new(
-                "dynamic_event",
-                "nexus_api_c_interops::log",
-                level,
-                Some(file!()),
-                Some(line!()),
-                Some("nexus_api_c_interops"),
-                FieldSet::new(&["message"], unsafe {
-                    field_id_uninit.assume_init()
-                }),
-                tracing::metadata::Kind::EVENT,
-            )));
-            let callsite =
-                Box::into_raw(Box::new(DefaultCallsite::new(unsafe {
-                    &*meta
-                })));
-            unsafe {
-                let _ = std::mem::replace(&mut (*r#ref).0, &*callsite);
-                Self {
-                    metadata: Box::from_raw(meta),
-                    callsite: Box::from_raw(callsite),
-                }
+            let _ = std::mem::replace(&mut (*r#ref).0, &*callsite);
+            Self {
+                metadata: Box::from_raw(meta),
+                callsite: Box::from_raw(callsite),
             }
         }
     }

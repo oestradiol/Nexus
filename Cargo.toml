@@ -6,7 +6,7 @@ members = [
     "api/c_interops",
     "api/core",
     "api/macros",
-    "example-rust",
+    "metrics",
 ]
 
 [workspace.package]
@@ -27,7 +27,7 @@ nexus-api-c_interops = { path = "api/c_interops" }
 nexus-api-macros = { path = "api/macros" }
 macros-lib = { path = "../macros/lib" }
 # Runtime
-tokio = { version = "^1.28", features = ["full"] }
+tokio = { path = "../../forks/tokio/tokio", features = ["full"] }
 # Logging
 tracing = "^0.1"
 tracing-appender = "^0.2"

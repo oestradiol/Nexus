@@ -15,7 +15,7 @@ async fn main() {
     };
 
     tokio::spawn(async move {
-        PluginInstance::new("./target/debug/libnexus_example.so")
+        PluginInstance::new("./target/debug/libnexus_metrics.so")
             .unwrap()
             .plugin
             .main()

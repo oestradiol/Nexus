@@ -1,5 +1,5 @@
 [package]
-name = "nexus-example"
+name = "nexus-metrics"
 version = "0.1.0"
 authors.workspace = true
 repository.workspace = true
@@ -15,5 +15,9 @@ crate-type = ["dylib"]
 workspace = true
 
 [dependencies]
-nexus-api.workspace = true
-tracing.workspace = true
+nexus-api = { path = "../api/core" }
+tracing = "^0.1"
+serde = "^1.0"
+sysinfo = "0.32.0"
+humantime = "2.1.0"
+tokio.workspace = true

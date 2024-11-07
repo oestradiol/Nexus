@@ -1,2 +1,2 @@
 [build]
-rustflags = ["-Zthreads=12"]
+rustflags = ["-Cprefer-dynamic", "-Zthreads=12"]
