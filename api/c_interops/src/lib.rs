@@ -7,6 +7,7 @@ use std::{
     sync::{Arc, LazyLock, RwLock},
 };
 
+use nexus_api::tracing;
 use tracing::{
     callsite::DefaultCallsite, field::FieldSet, level_filters, log, Callsite,
     Event, Level, Metadata, Subscriber,
@@ -90,55 +91,52 @@ pub unsafe extern "C" fn log(log: *const c_char, level: u8) {
     let log: &str = Box::leak(Box::from(format!("{log}")));
     let level = u8_to_level(level);
 
-    {
-        let callsite = get_or_init_callsite(level);
-        let enabled = level <= level_filters::STATIC_MAX_LEVEL
-            && level <= level_filters::LevelFilter::current()
-            && {
-                let interest = callsite.interest();
-                !interest.is_never()
-                    && tracing::__macro_support::__is_enabled(
-                        callsite.metadata(),
-                        interest,
-                    )
-            };
-        let level = match level {
-            Level::ERROR => log::Level::Error,
-            Level::WARN => log::Level::Warn,
-            Level::INFO => log::Level::Info,
-            Level::DEBUG => log::Level::Debug,
-            _ => log::Level::Trace,
+    let callsite = get_or_init_callsite(level);
+    let enabled = level <= level_filters::STATIC_MAX_LEVEL
+        && level <= level_filters::LevelFilter::current()
+        && {
+            let interest = callsite.interest();
+            !interest.is_never()
+                && tracing::__macro_support::__is_enabled(
+                    callsite.metadata(),
+                    interest,
+                )
         };
-        let value_set = {
-            let mut iter = callsite.metadata().fields().iter();
-            [(
-                &iter.next().expect("FieldSet corrupted (this is a bug)"),
-                Some(&log as &dyn tracing::field::Value),
-            )]
-        };
-        let value_set = callsite.metadata().fields().value_set(&value_set);
-        if enabled {
+    let level = match level {
+        Level::ERROR => log::Level::Error,
+        Level::WARN => log::Level::Warn,
+        Level::INFO => log::Level::Info,
+        Level::DEBUG => log::Level::Debug,
+        _ => log::Level::Trace,
+    };
+    let value_set = {
+        let mut iter = callsite.metadata().fields().iter();
+        [(
+            &iter.next().expect("FieldSet corrupted (this is a bug)"),
+            Some(&log as &dyn tracing::field::Value),
+        )]
+    };
+    let value_set = callsite.metadata().fields().value_set(&value_set);
+    if enabled {
+        let meta = callsite.metadata();
+        Event::dispatch(meta, &value_set);
+    }
+    if level <= log::STATIC_MAX_LEVEL && tracing::dispatcher::has_been_set() {
+        use tracing::log;
+        if level <= log::max_level() {
             let meta = callsite.metadata();
-            Event::dispatch(meta, &value_set);
-        }
-        if level <= log::STATIC_MAX_LEVEL && tracing::dispatcher::has_been_set()
-        {
-            use tracing::log;
-            if level <= log::max_level() {
-                let meta = callsite.metadata();
-                let log_meta = log::Metadata::builder()
-                    .level(level)
-                    .target(meta.target())
-                    .build();
-                let logger = log::logger();
-                if logger.enabled(&log_meta) {
-                    tracing::__macro_support::__tracing_log(
-                        meta, logger, log_meta, &value_set,
-                    );
-                }
+            let log_meta = log::Metadata::builder()
+                .level(level)
+                .target(meta.target())
+                .build();
+            let logger = log::logger();
+            if logger.enabled(&log_meta) {
+                tracing::__macro_support::__tracing_log(
+                    meta, logger, log_meta, &value_set,
+                );
             }
         }
-    };
+    }
 }
 
 /// # Safety

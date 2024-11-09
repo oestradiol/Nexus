@@ -1,11 +1,10 @@
 #![expect(unsafe_code)]
 
-use std::{ops::Deref, path::Path, sync::Arc};
+use std::{ops::Deref, path::Path};
 
 use libloading::{Error, Library};
-use nexus_api::{Meta, Plugin};
-use nexus_utils::LOGGER;
-use tracing::{info, warn, Subscriber};
+use nexus_utils::api::{tracing, Meta, Plugin};
+use tracing::{info, warn};
 
 pub struct PluginInstance {
     pub(crate) meta: &'static Meta,
@@ -25,11 +24,10 @@ impl PluginInstance {
             let lib = LibWrapper::new(path)?;
             let meta = *lib.get(b"META")?;
 
-            let new =
-                lib.get::<unsafe extern "Rust" fn(
-                    Arc<dyn Subscriber + Send + Sync>,
+            let new = lib.get::<unsafe extern "Rust" fn(
+                //    Arc<dyn Subscriber + Send + Sync>,
                 ) -> Box<dyn Plugin>>(b"_new_rust_impl")?;
-            let plugin = new(LOGGER.get().unwrap().clone());
+            let plugin = new(); //LOGGER.get().unwrap().clone()
 
             Ok(Self { meta, plugin, lib })
         }

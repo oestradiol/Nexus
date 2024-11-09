@@ -26,9 +26,9 @@ pub fn plugin(input: TokenStream) -> TokenStream {
         #[expect(unsafe_code)]
         #[unsafe(no_mangle)]
         pub extern "Rust" fn _new_rust_impl(
-            logger: std::sync::Arc<dyn tracing::Subscriber + Send + Sync>,
+        //    logger: std::sync::Arc<dyn tracing::Subscriber + Send + Sync>,
         ) -> Box<dyn Plugin> {
-            tracing::subscriber::set_global_default(logger).unwrap();
+        //    tracing::subscriber::set_global_default(logger).unwrap();
             Box::new(Instance)
         }
     };

@@ -7,6 +7,7 @@ use crate::discord;
 
 use super::discord::EventFilters;
 use debug_print::debug_println;
+use nexus_api::{tokio, tracing};
 use tracing::{level_filters::LevelFilter, Subscriber};
 use tracing_layer_core::layer::WebhookLayer;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Layer, Registry};

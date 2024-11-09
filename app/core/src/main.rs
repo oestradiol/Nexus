@@ -4,7 +4,12 @@ mod on_shutdown;
 use std::path::PathBuf;
 
 use loader::PluginInstance;
+use nexus_utils::api::tokio;
 use on_shutdown::with_graceful_shutdown;
+
+// #[cfg(not(target_env = "msvc"))]
+// #[global_allocator]
+// static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
 #[tokio::main]
 async fn main() {
@@ -15,7 +20,7 @@ async fn main() {
     };
 
     tokio::spawn(async move {
-        PluginInstance::new("./target/debug/libnexus_metrics.so")
+        PluginInstance::new("./libnexus_metrics.so")
             .unwrap()
             .plugin
             .main()

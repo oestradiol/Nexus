@@ -27,7 +27,7 @@ nexus-api-c_interops = { path = "api/c_interops" }
 nexus-api-macros = { path = "api/macros" }
 macros-lib = { path = "../macros/lib" }
 # Runtime
-tokio = { path = "../../forks/tokio/tokio", features = ["full"] }
+tokio = { version = "^1.28", features = ["full"] }
 # Logging
 tracing = "^0.1"
 tracing-appender = "^0.2"
@@ -37,9 +37,6 @@ debug_print = "^1.0"
 color-eyre = "^0.6"
 # Utilities
 libloading = "^0.8"
-lazy_static = "^1.5"
-anyhow = "^1.0"
-regex = "^1.11"
 async-trait = "^0.1"
 serde_json = "^1.0"
 serde = "^1.0"

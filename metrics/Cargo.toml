@@ -11,13 +11,11 @@ edition.workspace = true
 [lib]
 crate-type = ["dylib"]
 
+[dependencies]
+nexus-api.workspace = true
+serde = "^1.0"
+sysinfo = "^0.32"
+humantime = "^2.1"
+
 [lints]
 workspace = true
-
-[dependencies]
-nexus-api = { path = "../api/core" }
-tracing = "^0.1"
-serde = "^1.0"
-sysinfo = "0.32.0"
-humantime = "2.1.0"
-tokio.workspace = true

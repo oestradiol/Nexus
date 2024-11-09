@@ -55,7 +55,7 @@ dependencies = [
  "futures-core",
  "memchr",
  "pin-project-lite",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
 ]
 
 [[package]]
@@ -385,7 +385,7 @@ dependencies = [
  "http",
  "indexmap",
  "slab",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "tokio-util",
  "tracing",
 ]
@@ -464,7 +464,7 @@ dependencies = [
  "itoa",
  "pin-project-lite",
  "smallvec",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "want",
 ]
 
@@ -480,7 +480,7 @@ dependencies = [
  "hyper-util",
  "rustls",
  "rustls-pki-types",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "tokio-rustls",
  "tower-service",
  "webpki-roots",
@@ -500,7 +500,7 @@ dependencies = [
  "hyper",
  "pin-project-lite",
  "socket2",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "tower-service",
  "tracing",
 ]
@@ -811,18 +811,15 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "nexus-api-macros",
+ "tokio",
  "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
 name = "nexus-api-c_interops"
 version = "0.1.0"
 dependencies = [
- "async-trait",
- "nexus-api-macros",
- "tracing",
- "tracing-subscriber",
+ "nexus-api",
 ]
 
 [[package]]
@@ -838,10 +835,7 @@ version = "0.1.0"
 dependencies = [
  "jemallocator",
  "libloading",
- "nexus-api",
  "nexus-utils",
- "tokio 1.41.0",
- "tracing",
 ]
 
 [[package]]
@@ -852,8 +846,6 @@ dependencies = [
  "nexus-api",
  "serde",
  "sysinfo",
- "tokio 1.41.0",
- "tracing",
 ]
 
 [[package]]
@@ -863,11 +855,8 @@ dependencies = [
  "color-eyre",
  "debug_print",
  "nexus-api",
- "regex",
  "serde",
  "serde_json",
- "tokio 1.41.0",
- "tracing",
  "tracing-appender",
  "tracing-layer-core",
  "tracing-subscriber",
@@ -1004,7 +993,7 @@ dependencies = [
  "rustls",
  "socket2",
  "thiserror",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "tracing",
 ]
 
@@ -1185,7 +1174,7 @@ dependencies = [
  "serde_json",
  "serde_urlencoded",
  "sync_wrapper",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "tokio-rustls",
  "tokio-util",
  "tower-service",
@@ -1521,6 +1510,8 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 [[package]]
 name = "tokio"
 version = "1.41.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "145f3413504347a2be84393cc8a7d2fb4d863b375909ea59f2158261aa258bbb"
 dependencies = [
  "backtrace",
  "bytes",
@@ -1530,33 +1521,8 @@ dependencies = [
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",
- "tokio-macros 2.4.0",
+ "tokio-macros",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "tokio"
-version = "1.41.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "145f3413504347a2be84393cc8a7d2fb4d863b375909ea59f2158261aa258bbb"
-dependencies = [
- "backtrace",
- "bytes",
- "libc",
- "mio",
- "pin-project-lite",
- "socket2",
- "tokio-macros 2.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "tokio-macros"
-version = "2.4.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -1578,7 +1544,7 @@ checksum = "0c7bc40d0e5a97695bb96e27995cd3a08538541b0a846f65bba7a359f36700d4"
 dependencies = [
  "rustls",
  "rustls-pki-types",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
 ]
 
 [[package]]
@@ -1591,7 +1557,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "pin-project-lite",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
 ]
 
 [[package]]
@@ -1682,7 +1648,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "tokio 1.41.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio",
  "tracing",
  "tracing-bunyan-formatter",
  "tracing-subscriber",

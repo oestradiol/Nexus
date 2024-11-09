@@ -1,11 +1,13 @@
-mod metrics;
+mod sys_info;
 
 use std::time::Duration;
 
-use metrics::{MetricsDataFormatted, SystemMetrics};
-use nexus_api::{r#impl, Meta};
+use nexus_api::{r#impl, tokio, tracing, Meta};
+use sys_info::SysInfo;
 use tokio::time::sleep;
 use tracing::info;
+
+pub const DELAY_SECS: f64 = 30.0;
 
 r#impl! {
     pub static META: Meta = Meta {
@@ -18,7 +20,7 @@ r#impl! {
         info!("Now collecting system metrics");
 
         // Initialize components
-        let mut metrics_collector = SystemMetrics::new();
+        let mut metrics_collector = SysInfo::new();
 
         // // Start SSH audit monitoring if enabled
         // if true { // TODO
@@ -29,11 +31,12 @@ r#impl! {
         // Main loop interval
         loop {
             // Collect system metrics
-            let metrics = metrics_collector.collect().await;
-            let metrics = MetricsDataFormatted::from(metrics);
-            info!("## Metrics update\n{}", metrics.to_string());
+            let metrics = metrics_collector.collect();
+            info!("## Metrics update\n{metrics}" );
             // Wait for the next update interval
-            sleep(Duration::from_secs(30)).await;
+            #[allow(clippy::cast_sign_loss)]
+            #[allow(clippy::cast_possible_truncation)]
+            sleep(Duration::from_secs(DELAY_SECS as u64)).await;
         }
     }
 }

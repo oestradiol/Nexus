@@ -4,7 +4,7 @@ pub use config::Config;
 mod payload;
 use payload::Payload;
 
-use tracing::Level;
+use nexus_api::tracing::Level;
 pub use tracing_layer_core::filters::EventFilters;
 pub use tracing_layer_core::layer::WebhookLayer;
 use tracing_layer_core::layer::WebhookLayerBuilder;
