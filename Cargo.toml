@@ -3,7 +3,7 @@ resolver = "2"
 members = [
     "app/core",
     "app/utils",
-    "api/c_interops",
+    # "api/c_interops",  # Disabled: C interop not needed
     "api/core",
     "api/macros",
     "metrics",
@@ -14,8 +14,8 @@ authors = ["Elaina <17bestradiol@proton.me>"]
 repository = "https://github.com/oestradiol/nexus"
 license = "BSD-3-Clause"
 keywords = ["server", "management", "plugins"]
-rust-version = "1.84"
-edition = "2021"
+rust-version = "1.94"
+edition = "2024"
 version = "0.1.0"
 
 [workspace.dependencies]
@@ -23,11 +23,11 @@ version = "0.1.0"
 nexus-core = { path = "app/core" }
 nexus-utils = { path = "app/utils" }
 nexus-api = { path = "api/core" }
-nexus-api-c_interops = { path = "api/c_interops" }
+# nexus-api-c_interops = { path = "api/c_interops" }  # Disabled: C interop not needed
 nexus-api-macros = { path = "api/macros" }
 macros-lib = { path = "../macros/lib" }
 # Runtime
-tokio = { version = "^1.28", features = ["full"] }
+tokio = { version = "^1.51", features = ["full"] }
 # Logging
 tracing = "^0.1"
 tracing-appender = "^0.2"
@@ -36,7 +36,7 @@ tracing-layer-core = { path = "../../forks/tracing-layer-slack-discord/core" }
 debug_print = "^1.0"
 color-eyre = "^0.6"
 # Utilities
-libloading = "^0.8"
+libloading = "^0.9"
 async-trait = "^0.1"
 serde_json = "^1.0"
 serde = "^1.0"

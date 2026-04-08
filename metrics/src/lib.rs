@@ -1,10 +1,8 @@
 mod sys_info;
 
 use std::time::Duration;
-
-use nexus_api::{r#impl, tokio, tracing, Meta};
+use nexus_api::{r#impl, Meta};
 use sys_info::SysInfo;
-use tokio::time::sleep;
 use tracing::info;
 
 pub const DELAY_SECS: f64 = 30.0;
@@ -21,7 +19,7 @@ r#impl! {
 
         // Initialize components
         let mut metrics_collector = SysInfo::new();
-
+        
         // // Start SSH audit monitoring if enabled
         // if true { // TODO
         //     let audit_monitor = AuditMonitor::new(Arc::clone(&config), Arc::clone(&notifier));
@@ -32,11 +30,11 @@ r#impl! {
         loop {
             // Collect system metrics
             let metrics = metrics_collector.collect();
-            info!("## Metrics update\n{metrics}" );
-            // Wait for the next update interval
+            info!("### Metrics update\n{metrics}" );
+            // Wait for the next update interval using runtime handle
             #[allow(clippy::cast_sign_loss)]
             #[allow(clippy::cast_possible_truncation)]
-            sleep(Duration::from_secs(DELAY_SECS as u64)).await;
+            self.sleep(Duration::from_secs(DELAY_SECS as u64)).await;
         }
     }
 }

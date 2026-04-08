@@ -12,8 +12,13 @@ edition.workspace = true
 workspace = true
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
-jemallocator = "^0.5"
+mimalloc = { version = "^0.1", optional = true }
+
+[features]
+default = []
 
 [dependencies]
 nexus-utils.workspace = true
 libloading.workspace = true
+tracing.workspace = true
+tokio.workspace = true

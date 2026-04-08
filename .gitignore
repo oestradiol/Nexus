@@ -1,2 +1,4 @@
 target
 Logs
+**/Cargo.lock
+flake.lock

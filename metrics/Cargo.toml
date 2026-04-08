@@ -13,8 +13,9 @@ crate-type = ["dylib"]
 
 [dependencies]
 nexus-api.workspace = true
+tracing.workspace = true
 serde = "^1.0"
-sysinfo = "^0.32"
+sysinfo = "^0.38"
 humantime = "^2.1"
 
 [lints]

@@ -1,7 +1,4 @@
-use nexus_utils::{
-    api::{tokio, tracing},
-    BackgroundWorker,
-};
+use nexus_utils::BackgroundWorker;
 use tokio::signal;
 use tracing::{info, warn};
 

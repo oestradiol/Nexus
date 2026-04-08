@@ -22,6 +22,15 @@ pub struct MemoryMetrics {
     pub used: u64,  // bytes
     pub total: u64, // bytes
 }
+impl MemoryMetrics {
+    pub fn percentage(&self) -> f64 {
+        #[allow(clippy::cast_precision_loss)]
+        let used = self.used as f64;
+        #[allow(clippy::cast_precision_loss)]
+        let total = self.total as f64;
+        100.0 * used / total
+    }
+}
 /// All units are in bytes
 pub struct Metrics {
     pub cpu: f32,
@@ -36,16 +45,15 @@ impl Display for Metrics {
 
         // RAM
         #[allow(clippy::cast_precision_loss)]
-        let used = self.ram.used as f64;
-        #[allow(clippy::cast_precision_loss)]
         let total = self.ram.total as f64;
         if total != 0.0 {
+            #[allow(clippy::cast_precision_loss)]
             write!(
                 f,
                 "\n**Memory:** {}/{} ({:.2}%)",
-                fmt_unit(used),
+                fmt_unit(self.ram.used as f64),
                 fmt_unit(total),
-                100.0 * used / total
+                self.ram.percentage()
             )?;
         }
 
@@ -82,8 +90,8 @@ impl Display for Metrics {
             {
                 let received = fmt_unit_net(*bytes_received);
                 let transmitted = fmt_unit_net(*bytes_transmitted);
-                write!(f, "\n- {name}: {received} received with {received_error_percentage:.2}% errors")?;
-                write!(f, ", {transmitted} transmitted with {transmit_error_percentage:.2}% errors")?;
+                write!(f, "\n- {name}: {received} in, {received_error_percentage:.2}% errors.")?;
+                write!(f, " {transmitted} out, {transmit_error_percentage:.2}% errors.")?;
             }
         }
 
@@ -95,10 +103,10 @@ impl SysInfo {
     pub fn new() -> Self {
         Self {
             system: System::new_with_specifics(
-                RefreshKind::new().without_processes(),
+                RefreshKind::everything().without_processes(),
             ),
-            networks: Networks::new(),
-            disks: Disks::new(),
+            networks: Networks::new_with_refreshed_list(),
+            disks: Disks::new_with_refreshed_list(),
         }
     }
 
@@ -137,7 +145,7 @@ impl SysInfo {
             return None;
         }
 
-        self.networks.refresh_list();
+        self.networks.refresh(true);
         let res = self
             .networks
             .list()
@@ -189,7 +197,7 @@ impl SysInfo {
             return None;
         }
 
-        self.disks.refresh_list();
+        self.disks.refresh(true);
         let res = self
             .disks
             .list()

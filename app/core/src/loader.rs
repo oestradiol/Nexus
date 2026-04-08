@@ -3,7 +3,7 @@
 use std::{ops::Deref, path::Path};
 
 use libloading::{Error, Library};
-use nexus_utils::api::{tracing, Meta, Plugin};
+use nexus_utils::api::{Meta, Plugin, RuntimeRef};
 use tracing::{info, warn};
 
 pub struct PluginInstance {
@@ -13,7 +13,7 @@ pub struct PluginInstance {
 }
 
 impl PluginInstance {
-    pub(crate) fn new<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
+    pub(crate) fn new<P: AsRef<Path>>(path: P, runtime: RuntimeRef) -> Result<Self, Error> {
         let path = path.as_ref();
         unsafe {
             info!(
@@ -21,13 +21,25 @@ impl PluginInstance {
                 path.file_name().unwrap().to_string_lossy()
             );
 
-            let lib = LibWrapper::new(path)?;
-            let meta = *lib.get(b"META")?;
+            let lib = LibWrapper::new(path)
+                .map_err(|e| {
+                    tracing::error!("Library::new failed: {:?}", e);
+                    e
+                })?;
+            let meta = *lib.get(b"META")
+                .map_err(|e| {
+                    tracing::error!("get META failed: {:?}", e);
+                    e
+                })?;
+            let new = lib.get::<unsafe extern "C" fn(
+                ) -> Box<dyn Plugin>>(b"_new_rust_impl")
+                .map_err(|e| {
+                    tracing::error!("get _new_rust_impl failed: {:?}", e);
+                    e
+                })?;
+            let mut plugin = new();
 
-            let new = lib.get::<unsafe extern "Rust" fn(
-                //    Arc<dyn Subscriber + Send + Sync>,
-                ) -> Box<dyn Plugin>>(b"_new_rust_impl")?;
-            let plugin = new(); //LOGGER.get().unwrap().clone()
+            plugin.init(runtime);
 
             Ok(Self { meta, plugin, lib })
         }

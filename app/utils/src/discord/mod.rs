@@ -4,7 +4,7 @@ pub use config::Config;
 mod payload;
 use payload::Payload;
 
-use nexus_api::tracing::Level;
+use tracing::Level;
 pub use tracing_layer_core::filters::EventFilters;
 pub use tracing_layer_core::layer::WebhookLayer;
 use tracing_layer_core::layer::WebhookLayerBuilder;
@@ -55,7 +55,7 @@ impl WebhookMessageFactory for Layer {
         let color = color_from_level(event_level);
         let mut embed = serde_json::json!({
             "title": format!("{} - {} {}", app_name, emoji, event_level),
-            "description": format!("```rust\n{}\n```", message),
+            "description": format!("{}", message),
             "fields": [
                 // {
                 //     "name": "Target Span",
